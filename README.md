@@ -1,3 +1,4 @@
+
 # Barcodify
 
 Modern QR Code & Barcode Generator built with Flask, HTML, CSS and JavaScript.
@@ -28,7 +29,5 @@ Create beautiful QR codes and barcodes with custom colors, print layouts, PDF ex
 
 ## Screenshots
 
-Add screenshots here.
+<img width="949" height="414" alt="barcodify_screenshot" src="https://github.com/user-attachments/assets/dd62d7e1-a3b5-4467-8e90-51448e64c9ed" />
 
-```bash
-screenshots/
