@@ -1,12 +1,13 @@
+# =========================================================
 # app.py
+# Lightweight QR & Barcode Generator
+# =========================================================
 
 import os
 import io
 import time
 import zipfile
 import base64
-
-from datetime import datetime
 
 from flask import (
     Flask,
@@ -15,8 +16,6 @@ from flask import (
     jsonify,
     send_file
 )
-
-from flask_sqlalchemy import SQLAlchemy
 
 import qrcode
 import barcode
@@ -38,47 +37,19 @@ from reportlab.lib.utils import ImageReader
 
 app = Flask(__name__)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(
+    os.path.abspath(__file__)
+)
 
-UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
-EXPORT_FOLDER = os.path.join(BASE_DIR, "exports")
+UPLOAD_FOLDER = os.path.join(
+    BASE_DIR,
+    "uploads"
+)
 
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(EXPORT_FOLDER, exist_ok=True)
-
-# =========================================================
-# DATABASE CONFIG
-# =========================================================
-
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-db = SQLAlchemy(app)
-
-# =========================================================
-# DATABASE MODEL
-# =========================================================
-
-class History(db.Model):
-
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
-
-    data = db.Column(
-        db.Text,
-        nullable=False
-    )
-
-    code_type = db.Column(
-        db.String(50)
-    )
-
-    created = db.Column(
-        db.DateTime,
-        default=datetime.utcnow
-    )
+os.makedirs(
+    UPLOAD_FOLDER,
+    exist_ok=True
+)
 
 # =========================================================
 # HELPERS
@@ -89,6 +60,10 @@ SUPPORTED_BARCODES = [
     "code39",
     "ean13"
 ]
+
+# =========================================================
+# APPLY GRADIENT
+# =========================================================
 
 def apply_gradient(image):
 
@@ -118,6 +93,9 @@ def apply_gradient(image):
         0.25
     )
 
+# =========================================================
+# IMAGE TO BASE64
+# =========================================================
 
 def img_to_b64(img):
 
@@ -134,6 +112,9 @@ def img_to_b64(img):
         buffer.read()
     ).decode()
 
+# =========================================================
+# SAVE IMAGE
+# =========================================================
 
 def save_image(img):
 
@@ -156,7 +137,7 @@ def save_image(img):
     return path
 
 # =========================================================
-# ROUTES
+# HOME
 # =========================================================
 
 @app.route("/")
@@ -215,10 +196,6 @@ def generate():
             data.get("use_gradient") == "true"
         )
 
-        logo_file = request.files.get(
-            "logo"
-        )
-
         # =================================================
         # QR CODE
         # =================================================
@@ -241,35 +218,11 @@ def generate():
                 back_color=bg_color
             ).convert("RGB")
 
-            # Gradient
+            # Gradient Effect
+
             if use_gradient:
+
                 img = apply_gradient(img)
-
-            # Logo
-            # if logo_file and logo_file.filename:
-
-            #     logo = Image.open(
-            #         logo_file.stream
-            #     ).convert("RGBA")
-
-            #     qr_w, qr_h = img.size
-
-            #     logo_size = qr_w // 4
-
-            #     logo = logo.resize(
-            #         (logo_size, logo_size)
-            #     )
-
-            #     pos = (
-            #         (qr_w - logo_size) // 2,
-            #         (qr_h - logo_size) // 2,
-            #     )
-
-            #     img.paste(
-            #         logo,
-            #         pos,
-            #         logo
-            #     )
 
         # =================================================
         # BARCODE
@@ -308,21 +261,12 @@ def generate():
 
         save_image(img)
 
-        # =================================================
-        # SAVE HISTORY
-        # =================================================
-
-        entry = History(
-            data=text,
-            code_type=code_type
-        )
-
-        db.session.add(entry)
-        db.session.commit()
-
         return jsonify({
+
             "success": True,
+
             "image": img_to_b64(img)
+
         })
 
     except Exception as e:
@@ -491,34 +435,6 @@ def batch_zip():
         }), 500
 
 # =========================================================
-# HISTORY
-# =========================================================
-
-@app.route("/history")
-def history():
-
-    rows = History.query.order_by(
-        History.id.desc()
-    ).all()
-
-    result = []
-
-    for row in rows:
-
-        result.append({
-            "id": row.id,
-            "data": row.data,
-            "type": row.code_type,
-            "created": row.created.strftime(
-                "%Y-%m-%d %H:%M"
-            )
-        })
-
-    return jsonify({
-        "history": result
-    })
-
-# =========================================================
 # HEALTH CHECK
 # =========================================================
 
@@ -534,9 +450,6 @@ def ping():
 # =========================================================
 
 if __name__ == "__main__":
-
-    with app.app_context():
-        db.create_all()
 
     app.run(
         host="127.0.0.1",
