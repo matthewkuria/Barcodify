@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>Barcodify — QR & Barcode Generator</title>
+
+    <meta
+        name="description"
+        content="Create beautiful QR codes and barcodes with custom branding, layouts and print tools."
+    />
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    />
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    />
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    />
+
+    <link
+        rel="icon"
+        href="{{ url_for('static', filename='favicon.png') }}"
+    />
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    />
+
+</head>
+
+<body>
+
+<!-- BACKGROUND EFFECTS -->
+
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<!-- HEADER -->
+
+<header class="site-header">
+
+    <div class="brand">
+
+        <div class="brand-mark">
+
+            <svg
+                viewBox="0 0 24 24"
+                width="22"
+                height="22"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+            >
+                <path d="M4 6v12M7 6v12M10 6v8M13 6v12M16 6v8M19 6v12" />
+            </svg>
+
+        </div>
+
+        <div class="brand-text">
+
+            <span class="brand-name">
+                Barcodify
+            </span>
+
+            <span class="brand-tag">
+                QR & Barcode Studio
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="header-actions">
+
+        <button
+            type="button"
+            id="themeToggle"
+            class="theme-btn"
+        >
+            🌙
+        </button>
+
+        <a
+            href="#generator"
+            class="header-cta"
+        >
+            Generate Now ↓
+        </a>
+
+    </div>
+
+</header>
+
+<!-- MAIN -->
+
+<main
+    id="generator"
+    class="dashboard"
+>
+
+    <!-- LEFT SIDE -->
+
+    <section class="left-panel">
+
+        <div class="card">
+
+            <div class="card-head">
+
+                <h1>Generate Your Code</h1>
+
+                <p>
+                    Design QR codes and barcodes with
+                    custom colors, branding and print layouts.
+                </p>
+
+            </div>
+
+            <!-- FORM -->
+
+            <form
+                id="generateForm"
+                autocomplete="off"
+            >
+
+                <!-- CONTENT -->
+
+                <div class="field">
+
+                    <label for="urlInput">
+                        Content (URL or Text)
+                    </label>
+
+                    <input
+                        type="text"
+                        name="url"
+                        id="urlInput"
+                        placeholder="https://example.com"
+                        required
+                    />
+
+                </div>
+
+                <!-- CODE TYPE -->
+
+                <div class="field">
+
+                    <label>
+                        Code Type
+                    </label>
+
+                    <div
+                        class="segmented"
+                        role="tablist"
+                    >
+
+                        <input
+                            type="radio"
+                            name="code_type"
+                            id="typeQr"
+                            value="qrcode"
+                            checked
+                        />
+
+                        <label for="typeQr">
+                            QR Code
+                        </label>
+
+                        <input
+                            type="radio"
+                            name="code_type"
+                            id="typeBar"
+                            value="barcode"
+                        />
+
+                        <label for="typeBar">
+                            Barcode
+                        </label>
+
+                    </div>
+
+                </div>
+
+                <!-- BARCODE TYPES -->
+
+                <div
+                    class="field"
+                    id="barcodeField"
+                    hidden
+                >
+
+                    <label for="barcodeType">
+                        Barcode Type
+                    </label>
+
+                    <select
+                        name="barcode_type"
+                        id="barcodeType"
+                    >
+
+                        <option value="code128">
+                            Code128
+                        </option>
+
+                        <option value="code39">
+                            Code39
+                        </option>
+
+                        <option value="ean13">
+                            EAN13
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <!-- COLORS -->
+
+                <div class="input-row">
+
+                    <div class="field">
+
+                        <label for="qrColor">
+                            Foreground
+                        </label>
+
+                        <div class="color-input">
+
+                            <input
+                                type="color"
+                                name="qr_color"
+                                id="qrColor"
+                                value="#0f0f1a"
+                            />
+
+                            <input
+                                type="text"
+                                id="qrColorText"
+                                value="#0F0F1A"
+                            />
+
+                        </div>
+
+                    </div>
+
+                    <div class="field">
+
+                        <label for="bgColor">
+                            Background
+                        </label>
+
+                        <div class="color-input">
+
+                            <input
+                                type="color"
+                                name="bg_color"
+                                id="bgColor"
+                                value="#ffffff"
+                            />
+
+                            <input
+                                type="text"
+                                id="bgColorText"
+                                value="#FFFFFF"
+                            />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- TITLE -->
+
+                <div class="field">
+
+                    <label for="businessName">
+                        Print Title
+                    </label>
+
+                    <input
+                        type="text"
+                        name="business_name"
+                        id="businessName"
+                        placeholder="Title Goes Here"
+                    />
+
+                </div>
+
+                <!-- LOGO -->
+
+                <div
+                    class="field"
+                    id="logoField"
+                >
+
+                    <label>
+                        Upload Logo
+                    </label>
+
+                    <div
+                        class="dropzone"
+                        id="dropzone"
+                    >
+
+                        <input
+                            type="file"
+                            name="logo"
+                            id="logoInput"
+                            accept="image/*"
+                            hidden
+                        />
+
+                        <div id="dropzoneContent">
+
+                            <div class="upload-icon">
+                                ⬆
+                            </div>
+
+                            <p>
+                                Drag & drop logo here
+                            </p>
+
+                            <span>
+                                PNG · JPG · SVG
+                            </span>
+
+                        </div>
+
+                        <div
+                            class="file-preview"
+                            id="filePreview"
+                            hidden
+                        >
+
+                            <img
+                                id="logoThumb"
+                                alt="Logo preview"
+                            />
+
+                            <button
+                                type="button"
+                                id="removeLogo"
+                                class="file-remove"
+                            >
+                                ×
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- PRINT SETTINGS -->
+
+                <fieldset class="print-settings">
+
+                    <legend>
+                        Print Layout
+                    </legend>
+
+                    <div class="input-row">
+
+                        <div class="field">
+
+                            <label for="cardsPerRow">
+                                Cards per Row
+                            </label>
+
+                            <input
+                                type="number"
+                                id="cardsPerRow"
+                                value="2"
+                                min="1"
+                                max="4"
+                            />
+
+                        </div>
+
+                        <div class="field">
+
+                            <label for="cardsPerPage">
+                                Cards per Page
+                            </label>
+
+                            <input
+                                type="number"
+                                id="cardsPerPage"
+                                value="4"
+                                min="1"
+                                max="20"
+                            />
+
+                        </div>
+
+                    </div>
+
+                    <!-- PAPER SIZE -->
+
+                    <div class="field">
+
+                        <label for="paperSize">
+                            Paper Size
+                        </label>
+
+                        <select id="paperSize">
+
+                            <option value="A4">
+                                A4
+                            </option>
+
+                            <option value="A5">
+                                A5
+                            </option>
+
+                            <option value="Letter">
+                                Letter
+                            </option>
+
+                            <option value="80mm">
+                                80mm Receipt
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </fieldset>
+
+                <!-- GENERATE -->
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                >
+
+                    <span>
+                        ✨ Generate Code
+                    </span>
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+    <!-- RIGHT SIDE -->
+
+    <section class="right-panel">
+
+        <div class="card preview-card">
+
+            <div class="preview-head">
+
+                <h2>
+                    Live Preview
+                </h2>
+
+                <div
+                    class="status-pill"
+                    id="statusPill"
+                >
+                    Ready
+                </div>
+
+            </div>
+
+            <!-- PREVIEW -->
+
+            <div class="preview-wrapper">
+
+                <div
+                    class="preview-frame"
+                    id="previewFrame"
+                >
+
+                    <img
+                        id="previewImage"
+                        alt="Generated preview"
+                    />
+
+                    <div
+                        class="preview-empty"
+                        id="previewEmpty"
+                    >
+
+                        <div class="empty-icon">
+                            ▣
+                        </div>
+
+                        <p>
+                            Your generated code will appear here
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="preview-title"
+                    id="previewTitle"
+                    hidden
+                ></div>
+
+            </div>
+
+            <!-- ACTIONS -->
+
+            <div class="button-grid">
+
+                <button
+                    type="button"
+                    id="downloadPNG"
+                    disabled
+                >
+                    PNG
+                </button>
+
+                <button
+                    type="button"
+                    id="downloadPDF"
+                    disabled
+                >
+                    PDF
+                </button>
+
+                <button
+                    type="button"
+                    id="downloadSVG"
+                    disabled
+                >
+                    SVG
+                </button>
+
+                <button
+                    type="button"
+                    id="printCode"
+                    class="btn-accent"
+                    disabled
+                >
+                    Print
+                </button>
+
+            </div>
+
+            <!-- LOADER -->
+
+            <div
+                id="loader"
+                class="loader"
+                hidden
+            >
+
+                <div class="spinner"></div>
+
+                <span>
+                    Generating...
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- QUICK TIPS -->
+
+        <div class="card tips-card">
+
+            <h3>
+                Tips
+            </h3>
+
+            <ul>
+
+                <li>
+                    Use high contrast colors for better scanning
+                </li>
+
+                <li>
+                    Keep QR codes free from center obstructions
+                </li>
+
+                <li>
+                    Use SVG export for large print quality
+                </li>
+
+                <li>
+                    1 × 1 layout creates full-page posters
+                </li>
+
+            </ul>
+
+        </div>
+
+    </section>
+
+</main>
+
+<!-- FOOTER -->
+
+<footer class="site-footer">
+
+    Built with ♥ — Barcodify Studio
+
+</footer>
+
+<!-- SCRIPTS -->
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
