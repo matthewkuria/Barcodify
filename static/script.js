@@ -501,7 +501,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }
 
         const businessName =
-            businessNameInput.value || "Restaurant";
+            businessNameInput.value || "SCAN ME NOW";
 
         const cardsPerPage =
             parseInt(cardsPerPageInput.value) || 1;
